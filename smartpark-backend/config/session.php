@@ -18,7 +18,10 @@ return [
     |
     */
 
-    'driver' => env('SESSION_DRIVER', 'database'),
+    // Default session driver. Prefer 'file' for development so missing
+    // database session table won't cause runtime errors when SESSION_DRIVER
+    // isn't explicitly set. Production can still override via .env.
+    'driver' => env('SESSION_DRIVER', 'file'),
 
     /*
     |--------------------------------------------------------------------------
