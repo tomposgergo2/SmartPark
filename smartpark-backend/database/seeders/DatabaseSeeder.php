@@ -15,11 +15,20 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Create a couple of demo users for the frontend (password: "password")
+        User::factory()->create([
+            'name' => 'Demo User',
+            'email' => 'user@smartpark.com',
+            'role' => \App\Models\User::ROLE_USER,
+        ]);
 
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Admin User',
+            'email' => 'admin@smartpark.com',
+            'role' => \App\Models\User::ROLE_ADMIN,
         ]);
+
+        // Additional demo data: zones, vehicles, tickets, payments
+        $this->call(DemoDataSeeder::class);
     }
 }
