@@ -1,0 +1,659 @@
+openapi: 3.0.3
+info:
+  title: SmartPark API
+  version: 1.0.0
+  description: >-
+    OpenAPI specification (swagger.yaml) for the SmartPark backend.
+    Generated scaffold from the routes in routes/api.php. Some endpoints
+    require authentication and specific roles (admin / officer) enforced by
+    server-side policies.
+servers:
+  - url: http://localhost:8000/api
+    description: Local development server
+tags:
+  - name: Health
+    description: Health and liveness endpoints
+  - name: Auth
+    description: Authentication (login, logout, current user)
+  - name: Zones
+    description: Zone listing and management (admin)
+  - name: Vehicles
+    description: Vehicle management for users
+  - name: Tickets
+    description: Ticket purchasing and listing
+  - name: Fines
+    description: Fines listing, payment and issuance
+  - name: Officer
+    description: Officer-specific endpoints (lookup, issue fines)
+  - name: Admin
+    description: Admin-only statistics and management
+  - name: Users
+    description: User management (admin)
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          description: Role name, e.g. admin, officer, user
+    Zone:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        price_per_hour:
+          type: number
+          format: float
+        description:
+          type: string
+    Vehicle:
+      type: object
+      properties:
+        id:
+          type: integer
+        plate:
+          type: string
+        make:
+          type: string
+        model:
+          type: string
+        user_id:
+          type: integer
+    Ticket:
+      type: object
+      properties:
+        id:
+          type: integer
+        vehicle_id:
+          type: integer
+        zone_id:
+          type: integer
+        paid:
+          type: boolean
+        issued_at:
+          type: string
+          format: date-time
+    Fine:
+      type: object
+      properties:
+        id:
+          type: integer
+        ticket_id:
+          type: integer
+        amount:
+          type: number
+          format: float
+        paid:
+          type: boolean
+        issued_by:
+          type: integer
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - email
+        - password
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        user:
+          $ref: '#/components/schemas/User'
+paths:
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Health check
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+  /zones:
+    get:
+      tags:
+        - Zones
+      summary: List zones
+      responses:
+        '200':
+          description: Array of zones
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Zone'
+    post:
+      tags:
+        - Zones
+      summary: Create a zone (admin only)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                price_per_hour:
+                  type: number
+                  format: float
+                description:
+                  type: string
+      responses:
+        '201':
+          description: Zone created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Zone'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden (requires admin)
+  /zones/{id}:
+    put:
+      tags:
+        - Zones
+      summary: Update a zone (admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                price_per_hour:
+                  type: number
+                  format: float
+                description:
+                  type: string
+      responses:
+        '200':
+          description: Zone updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Zone'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+    delete:
+      tags:
+        - Zones
+      summary: Delete a zone (admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Zone deleted
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Invalid credentials
+  /auth/me:
+    get:
+      tags:
+        - Auth
+      summary: Current authenticated user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized
+  /auth/logout:
+    post:
+      tags:
+        - Auth
+      summary: Logout (invalidate token)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Logged out
+  /vehicles:
+    get:
+      tags:
+        - Vehicles
+      summary: List vehicles for the authenticated user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Array of vehicles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Vehicle'
+    post:
+      tags:
+        - Vehicles
+      summary: Create vehicle
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                plate:
+                  type: string
+                make:
+                  type: string
+                model:
+                  type: string
+      responses:
+        '201':
+          description: Vehicle created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+  /vehicles/{id}:
+    get:
+      tags:
+        - Vehicles
+      summary: Get a vehicle
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Vehicle
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+        '404':
+          description: Not found
+    put:
+      tags:
+        - Vehicles
+      summary: Update a vehicle
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                plate:
+                  type: string
+                make:
+                  type: string
+                model:
+                  type: string
+      responses:
+        '200':
+          description: Vehicle updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+    delete:
+      tags:
+        - Vehicles
+      summary: Delete a vehicle
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Deleted
+  /tickets:
+    get:
+      tags:
+        - Tickets
+      summary: List tickets (for user)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Array of tickets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ticket'
+    post:
+      tags:
+        - Tickets
+      summary: Create a ticket (purchase)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                vehicle_id:
+                  type: integer
+                zone_id:
+                  type: integer
+                duration_minutes:
+                  type: integer
+      responses:
+        '201':
+          description: Ticket created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+  /fines:
+    get:
+      tags:
+        - Fines
+      summary: List fines
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Array of fines
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Fine'
+  /fines/{id}/pay:
+    post:
+      tags:
+        - Fines
+      summary: Pay a fine
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Payment processed
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+  /officer/fines:
+    get:
+      tags:
+        - Officer
+      summary: List fines (officer view)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Array of fines
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Fine'
+    post:
+      tags:
+        - Officer
+      summary: Issue a fine (officer only)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ticket_id:
+                  type: integer
+                amount:
+                  type: number
+                  format: float
+                note:
+                  type: string
+      responses:
+        '201':
+          description: Fine issued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fine'
+        '403':
+          description: Forbidden (requires officer role)
+  /officer/lookup:
+    get:
+      tags:
+        - Officer
+      summary: Lookup vehicle by plate (officer)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: plate
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lookup result (vehicles/tickets)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  vehicles:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Vehicle'
+                  tickets:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Ticket'
+        '400':
+          description: Bad request (missing plate)
+  /admin/stats:
+    get:
+      tags:
+        - Admin
+      summary: Admin statistics
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Stats object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users_count:
+                    type: integer
+                  active_tickets:
+                    type: integer
+                  total_revenue:
+                    type: number
+                    format: float
+        '403':
+          description: Forbidden (requires admin)
+  /users:
+    get:
+      tags:
+        - Users
+      summary: List users (admin)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Array of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+    post:
+      tags:
+        - Users
+      summary: Create user (admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                role:
+                  type: string
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /users/{id}:
+    put:
+      tags:
+        - Users
+      summary: Update user (admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                role:
+                  type: string
+      responses:
+        '200':
+          description: User updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: Not found
+
