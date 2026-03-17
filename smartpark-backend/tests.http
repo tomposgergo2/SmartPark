@@ -1,0 +1,162 @@
+@baseUrl = http://127.0.0.1:8000/api
+
+### Health check
+GET {{baseUrl}}/health
+
+### Public zones
+GET {{baseUrl}}/zones
+
+### Auth login (email/password helyére írj érvényes felhasználót)
+@authToken = 
+
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@smartpark.com",
+  "password": "password"
+}
+
+### Auth me (fejlécekbe token behelyettesítéssel)
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{"2|4VPFG0kw8C1E8oLZuogo6tjMBsPHCSehCRKK7QpU7c06504d""}}
+
+### Auth logout
+POST {{baseUrl}}/auth/logout
+Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+
+### Zones - create
+POST {{baseUrl}}/zones
+Authorization: Bearer 2|4VPFG0kw8C1E8oLZuogo6tjMBsPHCSehCRKK7QpU7c06504d
+Content-Type: application/json
+
+{
+  "name": "Zona A",
+  "price_per_minute": 5,
+  "max_parking_minutes": 120
+}
+
+### Zones - update
+PUT {{baseUrl}}/zones/1
+Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Content-Type: application/json
+
+{
+  "name": "Zona A1",
+  "price_per_minute": 6,
+  "max_parking_minutes": 150
+}
+
+### Zones - delete
+DELETE {{baseUrl}}/zones/1
+Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+
+### Vehicles - list
+GET {{baseUrl}}/vehicles
+Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+
+### Vehicles - create
+POST {{baseUrl}}/vehicles
+Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Content-Type: application/json
+
+{
+  "plate": "ABC-123",
+  "make": "Toyota",
+  "model": "Corolla"
+}
+
+### Vehicles - show
+GET {{baseUrl}}/vehicles/1
+Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+
+### Vehicles - update
+PUT {{baseUrl}}/vehicles/1
+Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Content-Type: application/json
+
+{
+  "make": "Toyota",
+  "model": "Camry"
+}
+
+### Vehicles - delete
+DELETE {{baseUrl}}/vehicles/1
+Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+
+### Tickets - list
+GET {{baseUrl}}/tickets
+Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+
+### Tickets - create
+POST {{baseUrl}}/tickets
+Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Content-Type: application/json
+
+{
+  "vehicle_id": 1,
+  "zone_id": 1,
+  "minutes": 60
+}
+
+### Fines - list (user-facing)
+GET {{baseUrl}}/fines
+Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+
+### Officer fines - list
+GET {{baseUrl}}/officer/fines
+Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+
+### Officer fines - issue
+POST {{baseUrl}}/officer/fines
+Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Content-Type: application/json
+
+{
+  "vehicle_id": 1,
+  "amount": 500,
+  "reason": "tiltott parkolás"
+}
+
+### Officer lookup by plate
+GET {{baseUrl}}/officer/lookup?plate=ABC-123
+Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+
+### Admin stats
+GET {{baseUrl}}/admin/stats
+Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+
+### Pay fine
+POST {{baseUrl}}/fines/1/pay
+Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Content-Type: application/json
+
+{
+  "payment_method": "card"
+}
+
+### Users - list
+GET {{baseUrl}}/users
+Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+
+### Users - create
+POST {{baseUrl}}/users
+Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Content-Type: application/json
+
+{
+  "name": "Felhasználó",
+  "email": "user@example.com",
+  "password": "password",
+  "role": "user"
+}
+
+### Users - update
+PUT {{baseUrl}}/users/1
+Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Content-Type: application/json
+
+{
+  "name": "Felhasználó Módosítva",
+  "role": "officer"
+}
