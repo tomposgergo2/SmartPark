@@ -19,11 +19,15 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 // Auth
+Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
 	Route::get('/auth/me', [AuthController::class, 'me']);
 	Route::post('/auth/logout', [AuthController::class, 'logout']);
+	Route::get('/auth/tokens', [AuthController::class, 'tokens']);
+	Route::delete('/auth/tokens/{id}', [AuthController::class, 'revokeToken']);
+	Route::post('/auth/logout-all', [AuthController::class, 'logoutAll']);
 
 	// Vehicles
 	Route::get('/vehicles', [VehicleController::class, 'index']);
@@ -35,6 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
 	// Tickets
 	Route::get('/tickets', [TicketController::class, 'index']);
 	Route::post('/tickets', [TicketController::class, 'store']);
+	Route::post('/tickets/{id}/extend', [TicketController::class, 'extend']);
 
 	// Fines (also expose at /fines for user-facing listing)
 	Route::get('/fines', [FineController::class, 'index']);
