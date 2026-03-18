@@ -96,4 +96,48 @@ class TicketController extends Controller
 
         return response()->json(['ticket' => $ticket, 'payment' => $payment], 201);
     }
+
+    public function extend(Request $request, int $id)
+    {
+        $data = $request->validate([
+            'minutes' => 'required|integer|min:1',
+        ]);
+
+        $ticket = Ticket::with('vehicle', 'zone')->findOrFail($id);
+
+        if (! $ticket->vehicle || (int) $ticket->vehicle->user_id !== (int) $request->user()->id) {
+            return response()->json(['message' => 'Forbidden: ticket does not belong to user'], 403);
+        }
+
+        if ($ticket->status !== 'ACTIVE') {
+            return response()->json(['message' => 'Only active tickets can be extended'], 422);
+        }
+
+        $currentEnd = Carbon::parse($ticket->end_time);
+        if ($currentEnd->isPast()) {
+            return response()->json(['message' => 'Ticket already expired'], 422);
+        }
+
+        $minutesToAdd = (int) $data['minutes'];
+        $totalMinutes = Carbon::parse($ticket->start_time)->diffInMinutes((clone $currentEnd)->addMinutes($minutesToAdd));
+
+        if ($ticket->zone && $totalMinutes > (int) $ticket->zone->max_minutes) {
+            return response()->json(['message' => 'Ticket extension exceeds zone maximum minutes'], 422);
+        }
+
+        $extraPriceCents = $ticket->zone
+            ? (int) ceil($ticket->zone->rate_per_hour * ($minutesToAdd / 60))
+            : 0;
+
+        $ticket->end_time = (clone $currentEnd)->addMinutes($minutesToAdd);
+        $ticket->price = (int) $ticket->price + $extraPriceCents;
+        $ticket->save();
+
+        return response()->json([
+            'message' => 'Ticket extended successfully',
+            'ticket' => $ticket,
+            'extended_minutes' => $minutesToAdd,
+            'extra_price' => $extraPriceCents,
+        ]);
+    }
 }

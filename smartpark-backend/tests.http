@@ -6,6 +6,18 @@ GET {{baseUrl}}/health
 ### Public zones
 GET {{baseUrl}}/zones
 
+### Auth register (stabil JSON válasz)
+POST {{baseUrl}}/auth/register
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "Teszt Elek",
+  "email": "teszt_uj@example.com",
+  "password": "Password123",
+  "password_confirmation": "Password123"
+}
+
 ### Auth login (email/password helyére írj érvényes felhasználót)
 @authToken = 
 
@@ -13,8 +25,8 @@ POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-  "email": "admin@smartpark.com",
-  "password": "password"
+  "email": "teszt_uj@example.com",
+  "password": "Password123"
 }
 
 ### Auth me (fejlécekbe token behelyettesítéssel)
@@ -24,6 +36,21 @@ Authorization: Bearer {{"2|4VPFG0kw8C1E8oLZuogo6tjMBsPHCSehCRKK7QpU7c06504d""}}
 ### Auth logout
 POST {{baseUrl}}/auth/logout
 Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+
+### Auth tokens - list current user's devices/tokens
+GET {{baseUrl}}/auth/tokens
+Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Accept: application/json
+
+### Auth tokens - revoke one token by id
+DELETE {{baseUrl}}/auth/tokens/1
+Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Accept: application/json
+
+### Auth logout all devices
+POST {{baseUrl}}/auth/logout-all
+Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Accept: application/json
 
 ### Zones - create
 POST {{baseUrl}}/zones
@@ -97,6 +124,16 @@ Content-Type: application/json
   "vehicle_id": 1,
   "zone_id": 1,
   "minutes": 60
+}
+
+### Tickets - extend
+POST {{baseUrl}}/tickets/1/extend
+Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Accept: application/json
+Content-Type: application/json
+
+{
+  "minutes": 30
 }
 
 ### Fines - list (user-facing)
