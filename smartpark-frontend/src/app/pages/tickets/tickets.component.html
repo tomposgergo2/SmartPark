@@ -1,0 +1,20 @@
+<section class="card">
+  <div class="section-head"><div><h3>Parking Tickets</h3><p class="muted">Your parking history</p></div></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Plate</th><th>Zone</th><th>Start</th><th>End</th><th>Cost</th><th>Status</th></tr></thead>
+      <tbody>
+        @for (ticket of tickets; track ticket.id) {
+          <tr>
+            <td>{{ ticket.licensePlate }}</td>
+            <td>{{ ticket.zoneName }}</td>
+            <td>{{ ticket.startTime | date:'medium' }}</td>
+            <td>{{ ticket.endTime ? (ticket.endTime | date:'medium') : '-' }}</td>
+            <td>${{ ticket.cost.toFixed(2) }}</td>
+            <td><span class="pill" [class.success]="ticket.status === 'completed'">{{ ticket.status }}</span></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>
