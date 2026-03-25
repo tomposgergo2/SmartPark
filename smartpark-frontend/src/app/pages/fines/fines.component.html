@@ -1,0 +1,21 @@
+<section class="card">
+  <div class="section-head"><div><h3>Fines</h3><p class="muted">Review and pay your fines</p></div></div>
+  <div class="list-stack">
+    @for (fine of fines; track fine.id) {
+      <div class="list-card">
+        <div>
+          <strong>{{ fine.licensePlate }}</strong>
+          <p class="muted">{{ fine.reason }}</p>
+          <p class="muted">Issued: {{ fine.issuedAt | date:'mediumDate' }}</p>
+        </div>
+        <div class="fine-actions">
+          <strong>${{ fine.amount.toFixed(2) }}</strong>
+          <span class="pill" [class.success]="fine.status === 'paid'" [class.danger]="fine.status === 'unpaid'">{{ fine.status }}</span>
+          @if (fine.status === 'unpaid') {
+            <button class="primary-btn" (click)="payFine(fine.id)">Pay Now</button>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</section>
