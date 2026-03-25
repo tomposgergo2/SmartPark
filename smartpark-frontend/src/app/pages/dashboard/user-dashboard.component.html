@@ -1,0 +1,41 @@
+<div class="stats-grid">
+  <div class="card stat-card"><span class="muted">Balance</span><strong class="accent-green">${{ auth.user()?.balance?.toFixed(2) }}</strong><small>Available funds</small></div>
+  <div class="card stat-card"><span class="muted">Vehicles</span><strong>{{ vehicles.length }}</strong><small>Registered vehicles</small></div>
+  <div class="card stat-card"><span class="muted">Active Parking</span><strong>{{ activeParking ? 1 : 0 }}</strong><small>Currently parked</small></div>
+  <div class="card stat-card"><span class="muted">Unpaid Fines</span><strong class="accent-red">{{ unpaidFinesCount }}</strong><small>Requires attention</small></div>
+</div>
+
+@if (activeParking) {
+  <section class="card highlighted-card">
+    <div class="section-head">
+      <div>
+        <h3>Active Parking Session</h3>
+        <p class="muted">Your vehicle is currently parked</p>
+      </div>
+      <span class="pill success">Active</span>
+    </div>
+    <div class="two-col">
+      <div>
+        <p><strong>License Plate:</strong> {{ activeParking.licensePlate }}</p>
+        <p><strong>Zone:</strong> {{ activeParking.zoneName }}</p>
+      </div>
+      <div>
+        <p><strong>Duration:</strong> {{ duration(activeParking.startTime) }}</p>
+        <p><strong>Current Cost:</strong> <span class="accent-blue">${{ cost(activeParking.startTime) }}</span></p>
+      </div>
+    </div>
+    <button class="outline-btn full-width" (click)="go('/parking')">View Details</button>
+  </section>
+} @else {
+  <section class="card">
+    <h3>No Active Parking</h3>
+    <p class="muted">Start a parking session to begin</p>
+    <button class="primary-btn full-width" (click)="go('/parking')">Start Parking</button>
+  </section>
+}
+
+<div class="quick-grid">
+  <div class="card quick-card" (click)="go('/vehicles')"><h3>Manage Vehicles</h3><p class="muted">Add or remove vehicles</p></div>
+  <div class="card quick-card" (click)="go('/tickets')"><h3>View Tickets</h3><p class="muted">Parking history</p></div>
+  <div class="card quick-card" (click)="go('/fines')"><h3>Pay Fines</h3><p class="muted">{{ unpaidFinesCount }} unpaid</p></div>
+</div>
