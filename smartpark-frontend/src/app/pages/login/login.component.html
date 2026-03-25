@@ -1,0 +1,31 @@
+<div class="login-screen">
+  <div class="login-card card">
+    <div class="logo-circle">P</div>
+    <h1>Parking Management System</h1>
+    <p class="muted">Sign in to your account</p>
+
+    <form (ngSubmit)="submit()" class="form-grid">
+      <div>
+        <label>Email</label>
+        <input type="email" [(ngModel)]="email" name="email" placeholder="user&#64;demo.com" required>
+      </div>
+      <div>
+        <label>Password</label>
+        <input type="password" [(ngModel)]="password" name="password" placeholder="password" required>
+      </div>
+      <button class="primary-btn" type="submit">Sign In</button>
+    </form>
+
+    @if (error) {
+      <p class="error-text">{{ error }}</p>
+    }
+
+    <div class="demo-box">
+      <p><strong>Demo Accounts:</strong></p>
+      <p>User: user&#64;demo.com</p>
+      <p>Officer: officer&#64;demo.com</p>
+      <p>Admin: admin&#64;demo.com</p>
+      <p class="muted">Password: any</p>
+    </div>
+  </div>
+</div>
