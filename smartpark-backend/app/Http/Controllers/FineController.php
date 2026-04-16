@@ -17,11 +17,24 @@ class FineController extends Controller
     {
         $query = Fine::with(['vehicle', 'zone', 'issuer'])->orderBy('id', 'desc');
 
-        if ($request->user() && ($request->user()->role ?? '') === 'ADMIN') {
+        $user = $request->user();
+
+        // Admins see all fines
+        if ($user && ($user->role ?? '') === 'ADMIN') {
             $fines = $query->get();
-        } else {
-            $fines = $query->where('issued_by_user_id', $request->user()->id)->get();
+
+            return response()->json($fines);
         }
+
+        // For non-admins: show fines the user issued (officer) OR fines issued against the user's vehicles.
+        // Previously the code only returned fines where issued_by_user_id == current user which meant
+        // regular users could not see fines issued to them.
+        $fines = $query->where(function ($q) use ($user) {
+            $q->where('issued_by_user_id', $user->id)
+              ->orWhereHas('vehicle', function ($vq) use ($user) {
+                  $vq->where('user_id', $user->id);
+              });
+        })->get();
 
         return response()->json($fines);
     }

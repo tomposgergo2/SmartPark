@@ -19,7 +19,7 @@ Content-Type: application/json
 }
 
 ### Auth login (email/password helyére írj érvényes felhasználót)
-@authToken = 
+@authToken = 96|158cahpNEfiBDN8PuEJ50vsTkdfyDy4B3JmEHd4y1ad7ac62
 
 POST {{baseUrl}}/auth/login
 Content-Type: application/json
@@ -31,41 +31,41 @@ Content-Type: application/json
 
 ### Auth me (fejlécekbe token behelyettesítéssel)
 GET {{baseUrl}}/auth/me
-Authorization: Bearer {{"2|4VPFG0kw8C1E8oLZuogo6tjMBsPHCSehCRKK7QpU7c06504d""}}
+Authorization: Bearer {{authToken}}
 
 ### Auth logout
 POST {{baseUrl}}/auth/logout
-Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Authorization: Bearer {{authToken}}
 
 ### Auth tokens - list current user's devices/tokens
 GET {{baseUrl}}/auth/tokens
-Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Authorization: Bearer {{authToken}}
 Accept: application/json
 
 ### Auth tokens - revoke one token by id
 DELETE {{baseUrl}}/auth/tokens/1
-Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Authorization: Bearer {{authToken}}
 Accept: application/json
 
 ### Auth logout all devices
 POST {{baseUrl}}/auth/logout-all
-Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Authorization: Bearer {{authToken}}
 Accept: application/json
 
 ### Zones - create
 POST {{baseUrl}}/zones
-Authorization: Bearer 2|4VPFG0kw8C1E8oLZuogo6tjMBsPHCSehCRKK7QpU7c06504d
+Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {
-  "name": "Zona A",
+  "name": "Zone B",
   "price_per_minute": 5,
   "max_parking_minutes": 120
 }
 
 ### Zones - update
 PUT {{baseUrl}}/zones/1
-Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {
@@ -76,30 +76,30 @@ Content-Type: application/json
 
 ### Zones - delete
 DELETE {{baseUrl}}/zones/1
-Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Authorization: Bearer {{authToken}}
 
 ### Vehicles - list
 GET {{baseUrl}}/vehicles
-Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Authorization: Bearer {{authToken}}
 
 ### Vehicles - create
 POST {{baseUrl}}/vehicles
-Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {
-  "plate": "ABC-123",
+  "plate_number": "ABC-123",
   "make": "Toyota",
   "model": "Corolla"
 }
 
 ### Vehicles - show
 GET {{baseUrl}}/vehicles/1
-Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Authorization: Bearer {{authToken}}
 
 ### Vehicles - update
 PUT {{baseUrl}}/vehicles/1
-Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {
@@ -109,15 +109,15 @@ Content-Type: application/json
 
 ### Vehicles - delete
 DELETE {{baseUrl}}/vehicles/1
-Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Authorization: Bearer {{authToken}}
 
 ### Tickets - list
 GET {{baseUrl}}/tickets
-Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Authorization: Bearer {{authToken}}
 
 ### Tickets - create
 POST {{baseUrl}}/tickets
-Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {
@@ -128,7 +128,7 @@ Content-Type: application/json
 
 ### Tickets - extend
 POST {{baseUrl}}/tickets/1/extend
-Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Authorization: Bearer {{authToken}}
 Accept: application/json
 Content-Type: application/json
 
@@ -138,15 +138,15 @@ Content-Type: application/json
 
 ### Fines - list (user-facing)
 GET {{baseUrl}}/fines
-Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Authorization: Bearer {{authToken}}
 
 ### Officer fines - list
 GET {{baseUrl}}/officer/fines
-Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Authorization: Bearer {{authToken}}
 
 ### Officer fines - issue
 POST {{baseUrl}}/officer/fines
-Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {
@@ -157,15 +157,15 @@ Content-Type: application/json
 
 ### Officer lookup by plate
 GET {{baseUrl}}/officer/lookup?plate=ABC-123
-Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Authorization: Bearer {{authToken}}
 
 ### Admin stats
 GET {{baseUrl}}/admin/stats
-Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Authorization: Bearer {{authToken}}
 
 ### Pay fine
 POST {{baseUrl}}/fines/1/pay
-Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {
@@ -174,11 +174,11 @@ Content-Type: application/json
 
 ### Users - list
 GET {{baseUrl}}/users
-Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Authorization: Bearer {{authToken}}
 
 ### Users - create
 POST {{baseUrl}}/users
-Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {
@@ -190,7 +190,7 @@ Content-Type: application/json
 
 ### Users - update
 PUT {{baseUrl}}/users/1
-Authorization: Bearer {{"1|uJ5Mc7PMbE0ntpfwKJ9UrdRJayIxxSihnpR7bCcy810f5755"}}
+Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {

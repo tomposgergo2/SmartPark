@@ -16,6 +16,8 @@ class VehicleController extends Controller
     {
         $data = $request->validate([
             'plate_number' => 'required|string|max:15|unique:vehicles,plate_number',
+            'make' => 'nullable|string|max:100',
+            'model' => 'nullable|string|max:100',
         ]);
 
         $vehicle = $request->user()->vehicles()->create($data);
@@ -34,6 +36,8 @@ class VehicleController extends Controller
         $vehicle = $request->user()->vehicles()->findOrFail($id);
         $data = $request->validate([
             'plate_number' => 'required|string|max:15|unique:vehicles,plate_number,' . $vehicle->id,
+            'make' => 'nullable|string|max:100',
+            'model' => 'nullable|string|max:100',
         ]);
         $vehicle->update($data);
         return $vehicle;
