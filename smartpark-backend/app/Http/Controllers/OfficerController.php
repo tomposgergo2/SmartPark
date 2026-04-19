@@ -20,8 +20,8 @@ class OfficerController extends Controller
             return response()->json(['status' => 'NO_VEHICLE', 'message' => 'No vehicle found for plate'], 200);
         }
 
-        // find latest ticket for vehicle
-        $ticket = $vehicle->tickets()->orderByDesc('start_time')->with('zone')->first();
+    // find latest ticket for vehicle (load zone and vehicle relations so frontend has plate and owner)
+    $ticket = $vehicle->tickets()->orderByDesc('start_time')->with(['zone','vehicle','vehicle.user'])->first();
         $now = Carbon::now();
 
         if (! $ticket) {
