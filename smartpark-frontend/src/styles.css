@@ -38,8 +38,8 @@ html, body { height: 100%; }
 		--bg: linear-gradient(180deg,#071022,#071a2a);
 		--card-bg: #0f1724;
 		--text: #e6eef8;
-		--muted: #9fb0c8;
-		--border: rgba(255,255,255,0.06);
+		--muted: #a8bfd2;
+		--border: rgba(255,255,255,0.08);
 		--surface-0: rgba(255,255,255,0.02);
 		--surface-1: rgba(255,255,255,0.04);
 	}
@@ -50,7 +50,8 @@ html, body { height: 100%; }
 	--bg: linear-gradient(180deg,#071022,#071a2a);
 	--card-bg: #0f1724;
 	--text: #e6eef8;
-	--muted: #9fb0c8;
+	--muted: #a8bfd2;
+	--border: rgba(255,255,255,0.08);
 }
 
 body {
@@ -108,6 +109,17 @@ body {
 	border-radius: 2px;
 }
 
+/* Ensure navbar links and brand use theme colors (visible in dark mode) */
+.navbar, .navbar .nav-link, .navbar .navbar-brand, .navbar .navbar-brand *, .navbar .nav-link i {
+	color: var(--muted) !important;
+}
+
+/* Dropdown toggle and other nav items */
+.navbar .nav-link.dropdown-toggle { color: var(--muted) !important; }
+
+/* Make nav brand title slightly brighter */
+.navbar .navbar-brand .h6, .navbar .navbar-brand .small { color: var(--text) !important; }
+
 /* Live status badge */
 .status-badge { display:inline-flex; align-items:center; gap:.5rem; padding:.3rem .6rem; border-radius:999px; background: rgba(34,197,94,0.12); color: var(--success); font-weight:600; }
 .status-badge .dot { width:10px; height:10px; border-radius:50%; background: var(--success); display:inline-block; }
@@ -115,10 +127,11 @@ body {
 
 /* Soft background tone rules */
 .card-vehicles { background: var(--surface-1); color: var(--text); }
-.card-tickets { background: #fefce8; color: #854d0e; }
-.card-fines { background: #fef2f2; color: var(--danger); }
+.card-vehicles { background: var(--surface-0); color: var(--text); }
+.card-tickets { background: var(--surface-0); color: var(--text); }
+.card-fines { background: var(--surface-0); color: var(--text); }
 .card-fines .icon, .card-fines .bi { color: var(--danger); }
-.card-fines:hover { background: #fee2e2; }
+.card-fines:hover { background: rgba(185,28,28,0.03); }
 
 /* Active parking large card */
 .active-parking { background: linear-gradient(90deg, rgba(79,70,229,0.06), rgba(59,130,246,0.03)); border: 1px solid rgba(79,70,229,0.08); }
@@ -133,12 +146,12 @@ body {
 	padding: .85rem 1.15rem;
 	border-radius: 12px;
 	font-weight: 700;
-	box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
+	box-shadow: 0 8px 18px rgba(79, 70, 229, 0.18);
 	transition: transform .12s ease, box-shadow .12s ease;
 }
 .btn-cta:hover {
 	transform: translateY(-1px);
-	box-shadow: 0 15px 30px rgba(79, 70, 229, 0.4);
+	box-shadow: 0 12px 24px rgba(79, 70, 229, 0.24);
 }
 
 /* Quick actions redesign */
@@ -159,6 +172,9 @@ body {
 .circle-btn.success { background: var(--success); color: white; border: none; }
 .circle-btn.ticket { background: var(--warning); color: #1f2937; border: none; }
 
+/* In dark mode ensure circle ticket icon is visible */
+.dark .circle-btn.ticket { color: var(--text) !important; }
+
 /* small FAB variants kept for legacy */
 .btn-fab { width:48px; height:48px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; padding:0; font-size:1.1rem; }
 
@@ -176,6 +192,24 @@ body {
 .ticket-card { border: 1px solid var(--border); border-radius: 10px; transition: background .12s ease, transform .12s ease; }
 .ticket-card:hover { background: var(--surface-0); transform: translateY(-2px); }
 .ticket-card .badge.lejart { background: var(--surface-1); color: var(--muted); }
+
+/* Ensure large stat numbers are high-contrast on dark surfaces */
+.card .display-4, .display-6, .countdown, .card .fw-bold.display-4 { color: var(--text); }
+
+/* Ensure small/secondary text is visible in dark mode */
+.text-secondary { color: var(--muted) !important; }
+.icon-muted { color: var(--muted); font-size: 1.6rem; opacity: .95 }
+
+/* FORCE: make card text readable in dark mode — set card body text to theme text color.
+	 This is intentionally broad to catch remaining hardcoded dark colors in templates. */
+.dark .card, .dark .card .card-body, .dark .recent-ticket, .dark .recent-ticket * {
+	color: var(--text) !important;
+}
+
+/* Re-apply color exceptions so icons and semantic colors keep their meaning */
+.dark .card-fines .icon, .dark .card-fines .bi { color: var(--danger) !important; }
+.dark .status-badge { color: var(--success) !important; }
+.dark .badge.lejart { color: var(--muted) !important; background: var(--surface-1) !important; }
 
 /* compact fines alert */
 .alert-danger { background: rgba(185,28,28,0.06); border-color: rgba(185,28,28,0.12); color: var(--danger); }
