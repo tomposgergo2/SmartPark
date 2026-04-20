@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
+import { ThemeService } from '../../services/theme.service';
 import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { PaymentService } from '../../services/payment.service';
@@ -29,7 +30,10 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
   private intervalId: any;
   private userSub: Subscription | null = null;
 
-  constructor(private auth: AuthService, private router: Router, private api: ApiService, private paymentService: PaymentService) { }
+  constructor(private auth: AuthService, private router: Router, private api: ApiService, private paymentService: PaymentService, private theme: ThemeService) { }
+
+  toggleTheme() { this.theme.toggle(); }
+  isDark(): boolean { return this.theme.isDark(); }
 
   ngOnInit(): void {
     // subscribe to auth user state and react when user becomes available

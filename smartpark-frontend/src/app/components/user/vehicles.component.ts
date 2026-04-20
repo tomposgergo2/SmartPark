@@ -13,21 +13,21 @@ import { Vehicle } from '../../models/vehicle.model';
         <form (ngSubmit)="add()" #vehicleForm="ngForm" class="row g-2 align-items-end">
           <div class="col-sm-4">
             <label class="form-label">Rendszám <span class="text-danger">*</span></label>
-            <input class="form-control" [(ngModel)]="form.plate_number" name="plate" required #plate="ngModel" />
+            <input class="form-control" [(ngModel)]="form.plate_number" name="plate" required #plate="ngModel" data-cy="vehicle-plate-input" />
             <div *ngIf="plate.invalid && (plate.dirty || plate.touched)" class="invalid-feedback d-block">
               Rendszám megadása kötelező.
             </div>
           </div>
           <div class="col-sm-3">
             <label class="form-label">Make</label>
-            <input class="form-control" [(ngModel)]="form.make" name="make" />
+            <input class="form-control" [(ngModel)]="form.make" name="make" data-cy="vehicle-make-input" />
           </div>
           <div class="col-sm-3">
             <label class="form-label">Model</label>
-            <input class="form-control" [(ngModel)]="form.model" name="model" />
+            <input class="form-control" [(ngModel)]="form.model" name="model" data-cy="vehicle-model-input" />
           </div>
           <div class="col-sm-2 text-end">
-            <button class="btn btn-primary" type="submit" [disabled]="adding || vehicleForm.invalid">Hozzáad</button>
+            <button class="btn btn-primary" type="submit" data-cy="vehicle-add-submit" [disabled]="adding || vehicleForm.invalid">Hozzáad</button>
           </div>
         </form>
       </div>

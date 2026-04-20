@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\PersonalAccessToken;
+use App\Models\RefreshToken;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Config;
+use Carbon\Carbon;
 
 class AuthController extends Controller
 {
@@ -25,9 +29,23 @@ class AuthController extends Controller
             'status' => 'ACTIVE',
         ]);
 
-        $token = $user->createToken('api-token')->plainTextToken;
+        // create an access token with expiry and a refresh token
+        $accessTtl = Config::get('tokens.access_token_minutes', 60);
+        $refreshDays = Config::get('tokens.refresh_token_days', 30);
 
-        return response()->json(['token' => $token, 'user' => $user], 201);
+        $accessToken = $user->createToken('api-token', ['*'], Carbon::now()->addMinutes($accessTtl))->plainTextToken;
+
+        // create refresh token (plain returned, hash stored)
+        $plainRefresh = Str::random(Config::get('tokens.refresh_token_length', 64));
+        RefreshToken::create([
+            'user_id' => $user->id,
+            'token_hash' => hash('sha256', $plainRefresh),
+            'expires_at' => Carbon::now()->addDays($refreshDays),
+            'ip_address' => $request->ip(),
+            'user_agent' => substr($request->userAgent() ?? '', 0, 500),
+        ]);
+
+        return response()->json(['access_token' => $accessToken, 'refresh_token' => $plainRefresh, 'user' => $user], 201);
     }
 
     public function login(Request $request)
@@ -43,9 +61,21 @@ class AuthController extends Controller
             return response()->json(['message' => 'Invalid credentials.'], 401);
         }
 
-        $token = $user->createToken('api-token')->plainTextToken;
+        $accessTtl = Config::get('tokens.access_token_minutes', 60);
+        $refreshDays = Config::get('tokens.refresh_token_days', 30);
 
-        return response()->json(['token' => $token, 'user' => $user]);
+        $accessToken = $user->createToken('api-token', ['*'], Carbon::now()->addMinutes($accessTtl))->plainTextToken;
+
+        $plainRefresh = Str::random(Config::get('tokens.refresh_token_length', 64));
+        RefreshToken::create([
+            'user_id' => $user->id,
+            'token_hash' => hash('sha256', $plainRefresh),
+            'expires_at' => Carbon::now()->addDays($refreshDays),
+            'ip_address' => $request->ip(),
+            'user_agent' => substr($request->userAgent() ?? '', 0, 500),
+        ]);
+
+        return response()->json(['access_token' => $accessToken, 'refresh_token' => $plainRefresh, 'user' => $user]);
     }
 
     public function me(Request $request)
@@ -60,6 +90,14 @@ class AuthController extends Controller
             $token->delete();
         }
 
+        // optionally, remove a refresh token if client supplied one
+        $refresh = $request->input('refresh_token');
+        if ($refresh) {
+            try {
+                RefreshToken::where('token_hash', hash('sha256', $refresh))->where('user_id', $request->user()->id)->delete();
+            } catch (\Exception $e) {}
+        }
+
         return response()->json(['message' => 'Logged out']);
     }
 
@@ -68,7 +106,10 @@ class AuthController extends Controller
         $tokens = $request->user()->tokens()
             ->get(['id', 'name', 'last_used_at', 'created_at']);
 
-        return response()->json($tokens);
+        // also return refresh tokens for convenience
+        $refreshes = RefreshToken::where('user_id', $request->user()->id)->get(['id', 'created_at', 'last_used_at', 'expires_at', 'ip_address']);
+
+        return response()->json(['access_tokens' => $tokens, 'refresh_tokens' => $refreshes]);
     }
 
     public function revokeToken(Request $request, int $id)
@@ -82,6 +123,47 @@ class AuthController extends Controller
         $token->delete();
 
         return response()->json(['message' => 'Token revoked']);
+    }
+
+    /**
+     * Exchange a refresh token for a new access token.
+     * Accepts: { refresh_token }
+     */
+    public function refresh(Request $request)
+    {
+        $data = $request->validate([
+            'refresh_token' => 'required|string',
+        ]);
+
+        $hash = hash('sha256', $data['refresh_token']);
+        $rt = RefreshToken::where('token_hash', $hash)->first();
+        if (! $rt || ($rt->expires_at && $rt->expires_at->isPast())) {
+            return response()->json(['message' => 'Invalid or expired refresh token.'], 401);
+        }
+
+        $user = $rt->user;
+        if (! $user) {
+            return response()->json(['message' => 'Invalid refresh token.'], 401);
+        }
+
+        // rotate refresh token: delete old, create new
+        $rt->delete();
+
+        $accessTtl = Config::get('tokens.access_token_minutes', 60);
+        $refreshDays = Config::get('tokens.refresh_token_days', 30);
+
+        $accessToken = $user->createToken('api-token', ['*'], Carbon::now()->addMinutes($accessTtl))->plainTextToken;
+
+        $plainRefresh = Str::random(Config::get('tokens.refresh_token_length', 64));
+        RefreshToken::create([
+            'user_id' => $user->id,
+            'token_hash' => hash('sha256', $plainRefresh),
+            'expires_at' => Carbon::now()->addDays($refreshDays),
+            'ip_address' => $request->ip(),
+            'user_agent' => substr($request->userAgent() ?? '', 0, 500),
+        ]);
+
+        return response()->json(['access_token' => $accessToken, 'refresh_token' => $plainRefresh, 'user' => $user]);
     }
 
     public function logoutAll(Request $request)

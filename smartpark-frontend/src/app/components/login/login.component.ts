@@ -35,7 +35,12 @@ export class LoginComponent {
       next: user => { this.router.navigate(['/dashboard']); finish(); },
       error: err => {
         console.error('Login error', err);
-        this.error = err?.error?.message || (err?.error ? JSON.stringify(err.error) : 'Login failed');
+        // Network / CORS errors produce a ProgressEvent (err.error) with isTrusted=true
+        if (err?.status === 0 || (err?.error && (err.error instanceof ProgressEvent))) {
+          this.error = 'Network error or CORS issue: cannot reach the API. Ensure the backend is running and CORS/proxy is configured.';
+        } else {
+          this.error = err?.error?.message || (err?.error ? JSON.stringify(err.error) : 'Login failed');
+        }
         finish();
       }
     });

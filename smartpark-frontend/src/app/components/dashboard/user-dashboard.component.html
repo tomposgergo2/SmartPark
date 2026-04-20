@@ -1,4 +1,10 @@
 <div class="user-dashboard">
+  <div class="d-flex justify-content-end mb-2">
+    <button class="btn btn-sm btn-outline-secondary" (click)="toggleTheme()" [attr.aria-pressed]="isDark()" title="Sötét mód" data-cy="theme-toggle">
+      <i class="bi" [ngClass]="isDark() ? 'bi-moon-fill' : 'bi-sun-fill'"></i>
+    </button>
+  </div>
+
   <ng-container *ngIf="user; else loading">
 
   <!-- Large active parking focus -->
@@ -27,7 +33,7 @@
         <div class="card active-parking p-5 text-center mb-3 empty">
           <div class="h3 mb-2">Nincs aktív parkolás</div>
           <div class="mb-3 text-muted">Válassz járművet és zónát, majd indítsd el a parkolást.</div>
-          <button class="btn-cta btn-lg start-parking" (click)="startParking()"><i class="bi bi-play-fill me-2"></i> Indíts parkolást</button>
+          <button class="btn-cta btn-lg start-parking" (click)="startParking()" data-cy="start-parking"><i class="bi bi-play-fill me-2"></i> Indíts parkolást</button>
         </div>
       </ng-template>
     </div>
@@ -80,8 +86,8 @@
     <div class="col-12 col-sm-6 col-md-3 d-flex align-items-stretch">
       <div class="card p-3 h-100 actions-card">
         <div class="card-body d-flex flex-column justify-content-center">
-          <div class="d-flex gap-3 flex-wrap justify-content-center align-items-center">
-            <button class="circle-btn gray" title="Új jármű" (click)="quickAddVehicle()"><i class="bi bi-plus-lg"></i></button>
+            <div class="d-flex gap-3 flex-wrap justify-content-center align-items-center">
+            <button class="circle-btn gray" title="Új jármű" (click)="quickAddVehicle()" data-cy="quick-add-vehicle"><i class="bi bi-plus-lg"></i></button>
             <button class="circle-btn success" title="Indíts parkolást" (click)="startParking()"><i class="bi bi-parking"></i></button>
             <button class="circle-btn ticket" title="Új jegy" (click)="go('/user/tickets')"><i class="bi bi-ticket-perforated"></i></button>
           </div>

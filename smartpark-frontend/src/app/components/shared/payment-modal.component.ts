@@ -14,12 +14,12 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 
         <div class="mb-2">
           <label class="form-label">Kártyabirtokos neve</label>
-          <input class="form-control" [(ngModel)]="cardHolder" />
+          <input class="form-control" [(ngModel)]="cardHolder" data-cy="payment-cardholder" />
         </div>
 
         <div class="mb-2">
           <label class="form-label">Kártyaszám</label>
-          <input class="form-control" maxlength="23" placeholder="XXXX XXXX XXXX XXXX" [ngModel]="cardNumber" (ngModelChange)="onCardInput($event)" />
+          <input class="form-control" maxlength="23" placeholder="XXXX XXXX XXXX XXXX" [ngModel]="cardNumber" (ngModelChange)="onCardInput($event)" data-cy="payment-card-number" />
           <div class="d-flex align-items-center gap-2 mt-1">
             <div class="card-brand">
               <ng-container *ngIf="cardBrand === 'Visa'">
@@ -46,20 +46,20 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
         </div>
 
         <div class="d-flex gap-2">
-          <div class="flex-fill">
+            <div class="flex-fill">
             <label class="form-label">Lejárat (MM/YY)</label>
-            <input class="form-control" maxlength="5" placeholder="MM/YY" [(ngModel)]="cardExp" />
+            <input class="form-control" maxlength="5" placeholder="MM/YY" [(ngModel)]="cardExp" data-cy="payment-card-exp" />
           </div>
           <div style="width:100px;">
             <label class="form-label">CVC</label>
-            <input class="form-control" maxlength="4" [(ngModel)]="cardCvc" />
+            <input class="form-control" maxlength="4" [(ngModel)]="cardCvc" data-cy="payment-card-cvc" />
           </div>
         </div>
 
       </div>
       <div class="sp-modal-footer">
-        <button class="btn btn-secondary" (click)="close()">Mégse</button>
-        <button class="btn btn-primary" [disabled]="submitting" (click)="submit()">{{ submitting ? 'Feldolgozás...' : 'Fizetés' }}</button>
+  <button class="btn btn-secondary" (click)="close()">Mégse</button>
+  <button class="btn btn-primary" data-cy="payment-confirm" [disabled]="submitting" (click)="submit()">{{ submitting ? 'Feldolgozás...' : 'Fizetés' }}</button>
       </div>
     </div>
   </div>

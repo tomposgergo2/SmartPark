@@ -21,6 +21,7 @@ Route::middleware('auth:sanctum')->group(function () {
 // Auth
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
+Route::post('/auth/refresh', [AuthController::class, 'refresh']);
 
 Route::middleware('auth:sanctum')->group(function () {
 	Route::get('/auth/me', [AuthController::class, 'me']);

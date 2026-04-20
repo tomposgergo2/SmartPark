@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthService } from './services/auth.service';
+import { ThemeService } from './services/theme.service';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
@@ -93,8 +94,10 @@ export class AppComponent {
   user = this.auth.currentUserValue;
   showHeader = true;
   today = new Date();
-  constructor(private auth: AuthService, private router: Router) {
+  constructor(private auth: AuthService, private router: Router, private theme: ThemeService) {
     this.auth.user$.subscribe(u => this.user = u);
+    // Apply saved or system theme preference at startup
+    try { this.theme.apply(this.theme.isDark()); } catch (e) {}
     // Hide the top header on the login/register page
     this.showHeader = !this.router.url.startsWith('/login');
     this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe((e: any) => {

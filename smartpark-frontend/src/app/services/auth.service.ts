@@ -35,7 +35,8 @@ export class AuthService {
   login(email: string, password: string): Observable<User> {
     return this.http.post<any>(this.api('/auth/login'), { email, password })
       .pipe(map(res => {
-        const token = res.token;
+        // backend may return access_token or token depending on implementation
+        const token = res.access_token || res.token || res.token_plain || res.tokenValue;
         const user = res.user;
         localStorage.setItem('sp_token', token);
         localStorage.setItem('sp_user', JSON.stringify(user));
@@ -47,7 +48,7 @@ export class AuthService {
   register(name: string, email: string, password: string, password_confirmation: string): Observable<User> {
     return this.http.post<any>(this.api('/auth/register'), { name, email, password, password_confirmation })
       .pipe(map(res => {
-        const token = res.token;
+        const token = res.access_token || res.token || res.token_plain || res.tokenValue;
         const user = res.user;
         localStorage.setItem('sp_token', token);
         localStorage.setItem('sp_user', JSON.stringify(user));
