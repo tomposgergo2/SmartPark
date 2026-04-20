@@ -1,4 +1,16 @@
-*.log
+/.env
+/vendor
+/node_modules
+/storage/*.key
+/storage/*.sqlite
+/storage/*.txt
+/public/hot
+/public/storage
+/storage/debugbar
+/storage/*/cache
+.idea
+.vscode
+.DS_Store*.log
 .DS_Store
 .env
 .env.backup
