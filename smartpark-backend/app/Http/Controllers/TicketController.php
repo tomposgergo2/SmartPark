@@ -10,8 +10,6 @@ use App\Models\Payment;
 use Carbon\Carbon;
 use App\Events\TicketPurchased;
 use App\Services\PaymentSimulator;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\TicketReceipt;
 
 class TicketController extends Controller
 {
@@ -96,15 +94,7 @@ class TicketController extends Controller
         // Fire event for bookkeeping and include any simulator meta (e.g. card info)
         event(new TicketPurchased($ticket, $payment, $sim['card'] ?? null));
 
-        // Send receipt email to vehicle owner if email exists
-        try {
-            $ownerEmail = optional($vehicle->user)->email;
-            if ($ownerEmail) {
-                Mail::to($ownerEmail)->send(new TicketReceipt($ticket, $payment));
-            }
-        } catch (\Throwable $e) {
-            // swallow email errors for now; logging could be added
-        }
+        // no email sending in this build (email features removed)
 
         return response()->json(['ticket' => $ticket, 'payment' => $payment], 201);
     }

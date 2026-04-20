@@ -1,22 +1,19 @@
 <?php
 
+// Migration removed: password reset tokens table is no longer used because
+// email/password reset flows were disabled per user request.
+
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('password_reset_tokens', function (Blueprint $table) {
-            $table->string('email')->index();
-            $table->string('token');
-            $table->timestamp('created_at')->nullable();
-        });
+        // intentionally left blank
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('password_reset_tokens');
+        // intentionally left blank
     }
 };
