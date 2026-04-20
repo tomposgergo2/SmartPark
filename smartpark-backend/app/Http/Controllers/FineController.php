@@ -26,6 +26,13 @@ class FineController extends Controller
             return response()->json($fines);
         }
 
+        // Parking officers should be able to see today's fines so they don't issue duplicates during their shift.
+        if ($user && in_array(($user->role ?? ''), ['PARKING_OFFICER'])) {
+            $midnight = Carbon::today();
+            $todayFines = $query->whereDate('issued_at', $midnight)->get();
+            return response()->json($todayFines);
+        }
+
         // For non-admins: show fines the user issued (officer) OR fines issued against the user's vehicles.
         // Previously the code only returned fines where issued_by_user_id == current user which meant
         // regular users could not see fines issued to them.

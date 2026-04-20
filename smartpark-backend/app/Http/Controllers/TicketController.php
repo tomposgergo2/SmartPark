@@ -101,6 +101,8 @@ class TicketController extends Controller
     {
         $data = $request->validate([
             'minutes' => 'required|integer|min:1',
+            // allow card simulation method for extension payments
+            'method' => 'nullable|in:CARD_SIM',
         ]);
 
         $ticket = Ticket::with('vehicle', 'zone')->findOrFail($id);
@@ -132,6 +134,20 @@ class TicketController extends Controller
         $ticket->end_time = (clone $currentEnd)->addMinutes($minutesToAdd);
         $ticket->price = (int) $ticket->price + $extraPriceCents;
         $ticket->save();
+
+        // If there's an extra price, simulate a payment for the extension using the PaymentSimulator
+        if ($extraPriceCents > 0) {
+            $sim = PaymentSimulator::simulate($data['method'] ?? 'CARD_SIM', $extraPriceCents);
+
+            $payment = Payment::create([
+                'ticket_id' => $ticket->id,
+                'amount' => $extraPriceCents,
+                'method' => $sim['method'],
+                'status' => $sim['status'],
+                'paid_at' => Carbon::now(),
+                'transaction_ref' => $sim['transaction_ref'],
+            ]);
+        }
 
         return response()->json([
             'message' => 'Ticket extended successfully',
