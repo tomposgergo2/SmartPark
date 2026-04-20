@@ -54,6 +54,7 @@ import { filter } from 'rxjs/operators';
                   <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{{ user.name }}</a>
                   <ul class="dropdown-menu dropdown-menu-end">
                     <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#changePasswordModal">Jelszó módosítása</a></li>
                     <li><a class="dropdown-item" (click)="logout()">Kijelentkezés</a></li>
                   </ul>
                 </li>
@@ -65,6 +66,7 @@ import { filter } from 'rxjs/operators';
     </ng-container>
 
   <router-outlet></router-outlet>
+  <app-change-password></app-change-password>
   <app-payment-host></app-payment-host>
     <ng-container *ngIf="showHeader">
       <footer class="app-footer mt-4">

@@ -18,6 +18,7 @@ import { TicketsComponent } from './components/user/tickets.component';
 import { FinesComponent } from './components/user/fines.component';
 import { PaymentModalComponent } from './components/shared/payment-modal.component';
 import { PaymentHostComponent } from './components/shared/payment-host.component';
+import { ChangePasswordComponent } from './components/shared/change-password.component';
 
 import { OfficerLookupComponent } from './components/officer/lookup.component';
 import { OfficerFinesComponent } from './components/officer/fines.component';
@@ -41,6 +42,7 @@ import { AdminMonitoringComponent } from './components/admin/monitoring.componen
     FinesComponent,
   PaymentModalComponent,
   PaymentHostComponent,
+  ChangePasswordComponent,
     OfficerLookupComponent,
     OfficerFinesComponent,
   OfficerInspectionsComponent,

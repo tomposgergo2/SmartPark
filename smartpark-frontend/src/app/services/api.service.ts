@@ -44,6 +44,12 @@ export class ApiService {
   getAdminStats() { return this.http.get(`${this.base}/admin/stats`, this.headers()); }
   updateUser(id: number, payload: any) { return this.http.put(`${this.base}/users/${id}`, payload, this.headers()); }
 
+  // Authenticated account actions
+  changePassword(current_password: string, password: string, password_confirmation: string) {
+    const payload = { current_password, password, password_confirmation };
+    return this.http.post(`${this.base}/auth/change-password`, payload, this.headers());
+  }
+
   // Zone management (update / delete)
   updateZone(id: number, payload: any) { return this.http.put(`${this.base}/zones/${id}`, payload, this.headers()); }
   deleteZone(id: number) { return this.http.delete(`${this.base}/zones/${id}`, this.headers()); }

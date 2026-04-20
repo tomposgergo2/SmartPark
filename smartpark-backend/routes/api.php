@@ -29,6 +29,9 @@ Route::middleware('auth:sanctum')->group(function () {
 	Route::delete('/auth/tokens/{id}', [AuthController::class, 'revokeToken']);
 	Route::post('/auth/logout-all', [AuthController::class, 'logoutAll']);
 
+	// Change password for authenticated users
+	Route::post('/auth/change-password', [AuthController::class, 'changePassword']);
+
 	// Vehicles
 	Route::get('/vehicles', [VehicleController::class, 'index']);
 	Route::post('/vehicles', [VehicleController::class, 'store']);
